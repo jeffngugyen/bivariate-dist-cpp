@@ -1,0 +1,35 @@
+name: Solver checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  correctness:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            openmp: 0
+          - os: ubuntu-latest
+            openmp: 1
+          - os: macos-latest
+            openmp: 0
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: git submodule update --init extern/pybind11
+      - run: make example test python-test OPENMP=${{ matrix.openmp }}
+  undefined-behavior:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: >-
+          make test OPENMP=0
+          CXXFLAGS='-O1 -g -Wall -Wextra -Wpedantic -fsanitize=undefined -fno-sanitize-recover=all'

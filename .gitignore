@@ -1,0 +1,7 @@
+build/
+build-*/
+*.o
+*.so
+*.pyd
+__pycache__/
+.venv/
