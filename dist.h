@@ -1,22 +1,18 @@
 #ifndef DIST_H
 #define DIST_H
 
-#include <omp.h>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <iostream>
-#include <chrono>
+#include <tuple>
 #include <vector>
-#include <cstdint>
-#include <set>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <functional>
-#include <bitset>
-#include <cassert>
-#include <compare>
 
-std::tuple<int, int> compute_dist(std::vector<std::vector<int> > const& X, std::vector<std::vector<int> > const& Z, int l=4, int m=7);
+using BinaryMatrix = std::vector<std::vector<int>>;
+
+// Preserve the original return order:
+// (min weight in ker(X) \ row(Z), min weight in ker(Z) \ row(X)).
+// With X/Z denoting X/Z stabilizer checks, this is (d_Z, d_X).
+// Matrices have 2*l*m columns; redundant rows and empty check sets are allowed.
+// Throws std::invalid_argument for invalid/unsupported input, and
+// std::domain_error if the code encodes no logical qubits.
+std::tuple<int, int> compute_dist(const BinaryMatrix& X, const BinaryMatrix& Z,
+                                  int l = 4, int m = 7);
 
 #endif
